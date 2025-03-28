@@ -1,0 +1,75 @@
+# Ignore empty directories
+# This is a bit tricky, as Git doesn't track empty directories.
+# The best approach is to prevent them from being created in the first place.
+# You can use `.gitkeep` files in directories that *must* exist.  If you
+# still want to include the directories use the following pattern to keep them
+# from showing changes, but not prevent them from being staged:
+# */
+# !*/.gitkeep
+
+# Ignore CSV files
+*.csv
+*.pkl
+
+
+# Ignore PyTorch model files and weights directory
+*.pth
+*.pt
+*.ckpt
+weights_directory/
+
+# Ignore Jupyter Notebook checkpoints and other temp files
+.ipynb_checkpoints/
+*.ipynb~
+
+# Ignore Python bytecode and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+wheels/
+
+# Ignore virtual environment
+venv/
+env/
+.venv/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE-specific files (adjust for your IDE)
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# Ignore temporary files and backups
+*~
+\#*#
+.*.swp
+.*.swo
+*.bak
+*.tmp
+*.log
+
+# Ignore data files (if you don't want to track them)
+data/
+dataset/
+logs/
+results/
+
+# Ignore dotenv file
+.env
+
+# Ignore Docker stuff if you use it but don't need to track
+docker-compose.yml
+docker-compose.override.yml
+Dockerfile
