@@ -16,11 +16,13 @@
 *.pth
 *.pt
 *.ckpt
-weights_directory/
+*.safetensors
+*
+Weights/
+
 
 # Ignore Jupyter Notebook checkpoints and other temp files
 .ipynb_checkpoints/
-*.ipynb~
 
 # Ignore Python bytecode and compiled files
 __pycache__/
@@ -65,6 +67,8 @@ data/
 dataset/
 logs/
 results/
+
+.locks/
 
 # Ignore dotenv file
 .env
