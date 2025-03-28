@@ -1,0 +1,18 @@
+vlm_app/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   └── VLMInterface.js
+│   │   ├── App.js
+│   │   ├── index.js
+│   │   ├── App.css
+│   │   └── index.css
+│   ├── package.json
+│   └── public/
+│       └── index.html
+├── backend/
+│   ├── main.py
+│   ├── models/
+│   │   └── vlm_model.py #Example file to host the code for the vlm model execution
+│   ├── requirements.txt
+├── README.md

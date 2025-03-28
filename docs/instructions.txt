@@ -1,0 +1,13 @@
+mkdir vlm_app
+cd vlm_app
+mkdir backend
+cd backend
+mkdir models
+touch main.py
+touch models/vlm_model.py
+touch requirements.txt
+cd ..
+mkdir frontend
+cd frontend
+npm create vite@latest . --template react
+cd ..

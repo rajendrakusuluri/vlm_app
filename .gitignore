@@ -1,5 +1,3 @@
-# Ignore empty directories
-# This is a bit tricky, as Git doesn't track empty directories.
 # The best approach is to prevent them from being created in the first place.
 # You can use `.gitkeep` files in directories that *must* exist.  If you
 # still want to include the directories use the following pattern to keep them
@@ -17,7 +15,8 @@
 *.pt
 *.ckpt
 *.safetensors
-*
+
+# If you *don't* want to ignore the Weights folder, remove the next line:
 Weights/
 
 
@@ -61,19 +60,3 @@ Thumbs.db
 *.bak
 *.tmp
 *.log
-
-# Ignore data files (if you don't want to track them)
-data/
-dataset/
-logs/
-results/
-
-.locks/
-
-# Ignore dotenv file
-.env
-
-# Ignore Docker stuff if you use it but don't need to track
-docker-compose.yml
-docker-compose.override.yml
-Dockerfile
