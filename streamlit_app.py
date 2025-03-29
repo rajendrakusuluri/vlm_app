@@ -62,16 +62,10 @@ if uploaded_file or text_prompt:
             # Streaming API Call
             with requests.post(f"{backend_url}/stream_process_image/", files=files, data=data, stream=True) as response:
                 response.raise_for_status()
-                for chunk in response.iter_content(chunk_size=8192):  # Adjust chunk_size as needed
+                for chunk in response.iter_content(chunk_size=8192, decode_unicode=True):  # Adjust chunk_size as needed
                     if chunk:
-                        try:
-                            decoded_chunk = chunk.decode('utf-8')
-                            full_response += decoded_chunk
-                            message_placeholder.markdown(full_response + "▌")  # Display with typing indicator
-                        except UnicodeDecodeError:
-                            # Handle potential decoding errors
-                            print(f"Skipping chunk due to decoding error.")
-                            continue
+                        full_response += chunk
+                        message_placeholder.markdown(full_response + "▌")  # Display with typing indicator
                 message_placeholder.markdown(full_response)  # Finalize the message
 
         st.session_state['chat_history'].append({"role": "assistant", "content": full_response})
