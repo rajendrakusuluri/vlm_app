@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from typing import List
 import asyncio
 import io
@@ -44,7 +45,7 @@ async def process_image(files: List[UploadFile] = File(...), text_prompt: str = 
         if result is None:
             raise HTTPException(status_code=500, detail="VLM processing failed.")  # Handle VLM failure
 
-        return result  # Return the Markdown result directly
+        return JSONResponse({"result": result})  # Return the Markdown result directly
 
     except HTTPException as http_ex:
         # Re-raise HTTPExceptions to preserve their status codes
