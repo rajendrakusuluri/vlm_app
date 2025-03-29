@@ -10,7 +10,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using device: {device}")
 
 # Define the cache directory in the same directory as this script
-cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__)), "Weights"))
+cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Weights")
 os.makedirs(cache_dir, exist_ok=True)  # Ensure the directory exists
 print(f"Using cache directory: {cache_dir}")
 
@@ -26,13 +26,13 @@ def load_model():
         model = Qwen2VLForConditionalGeneration.from_pretrained(
             "Qwen/Qwen2-VL-2B-Instruct",
             torch_dtype="auto",
-            device_map="auto",
-            cache_dir=cache_dir,  # Specify the cache directory
+            cache_dir=cache_dir,  # Removed device_map
         )
+        model = model.to(device)  # Move to device AFTER loading
         processor = AutoProcessor.from_pretrained(
             "Qwen/Qwen2-VL-2B-Instruct", cache_dir=cache_dir
         )
-        model = model.to(device)  # Move to the determined device
+
         print("Qwen2-VL model loaded successfully!")
         return model, processor
     except Exception as e:
@@ -45,7 +45,7 @@ model, processor = load_model()
 
 
 def process_image_and_text(
-    image_bytes: bytes = None, text_prompt: str = None, max_new_tokens: int = 128
+    image_bytes: bytes = None, text_prompt: str = None, max_new_tokens: int = 500
 ):
     """
     Processes the image and text prompt using the Qwen2-VL model.

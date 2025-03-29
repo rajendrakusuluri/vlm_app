@@ -2,7 +2,7 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import StreamingResponse
 from typing import Optional
 import asyncio
-from vlm_qwen2b import process_image_and_text
+from models.vlm_qwen2b import process_image_and_text
 
 app = FastAPI()
 

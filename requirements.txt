@@ -7,3 +7,8 @@ docling_core
 git+https://github.com/huggingface/transformers
 streamlit 
 requests         
+torchvision
+qwen_vl_utils
+tqdm
+accelerate>=0.26.0
+fastapi
