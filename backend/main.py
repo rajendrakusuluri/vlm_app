@@ -20,12 +20,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.post("/process_image/", response_class=PlainTextResponse)
 async def process_image(files: List[UploadFile] = File(...), text_prompt: str = ""):
     """
     Processes an image using a VLM model based on the provided text prompt.
     """
+    print("Received files:", files)  # Add this line
+    print("Received text_prompt:", text_prompt)  # Add this line
+
     if not files:
         raise HTTPException(status_code=400, detail="No image files provided.")
 
