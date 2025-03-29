@@ -1,0 +1,29 @@
+.chat-area {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .message-list {
+    margin-bottom: 10px;
+  }
+  
+  .message {
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+  }
+  
+  .message.user {
+    background-color: #4CAF50; /* Green for user */
+    text-align: right;
+  }
+  
+  .message.vlm {
+    background-color: #3f51b5; /* Blue for VLM */
+    text-align: left;
+  }
+  
+  .message-content {
+    word-wrap: break-word;
+  }
