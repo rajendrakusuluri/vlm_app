@@ -36,6 +36,7 @@ wheels/
 # node_modules
 node_modules/
 
+
 # Ignore virtual environment
 venv/
 env/
