@@ -3,12 +3,14 @@ import requests
 from PIL import Image
 import io
 import os
+import json
+import time
 
 # Streamlit App
 
-st.title("VLM-Powered Document Understanding")
+st.title("VLM-Powered Chatbot")
 st.markdown("""
-    Upload an image and provide a prompt to extract information and convert it to a structured format using a Vision Language Model.
+    Interact with a Vision Language Model by sending images and text prompts!
 """)
 
 # --- Sidebar Configuration ---
@@ -16,53 +18,73 @@ st.sidebar.header("Configuration")
 backend_url = st.sidebar.text_input("Backend URL", "http://localhost:8000")  # Default URL, user can change
 # You could potentially add model selection to the sidebar if you wanted to extend the functionality
 
-# --- File Upload ---
+# --- Chat History ---
+if 'chat_history' not in st.session_state:
+    st.session_state['chat_history'] = []
+
+def display_chat_history():
+    for message in st.session_state['chat_history']:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+# --- Image Upload ---
 uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
 
-# --- Text Prompt ---
-text_prompt = st.text_area("Text Prompt", "Convert this page to docling.", height=100)
+# --- Text Input ---
+text_prompt = st.chat_input("Enter your prompt here...")
 
-# --- Image Display ---
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+# --- Process User Input ---
+if uploaded_file or text_prompt:
+    user_message = {}
+    if uploaded_file:
+        image = Image.open(uploaded_file)
+        st.session_state['chat_history'].append({"role": "user", "content": f"Image: {uploaded_file.name}"})
+        user_message["image"] = {"name": uploaded_file.name, "content": uploaded_file.getvalue(), "type": uploaded_file.type}
+    if text_prompt:
+        st.session_state['chat_history'].append({"role": "user", "content": text_prompt})
+        user_message["text"] = text_prompt
+        
+    display_chat_history()
 
-# --- Process Button ---
-if st.button("Process Image"):
-    if uploaded_file is None:
-        st.error("Please upload an image first.")
-    else:
-        # --- Prepare the Request ---
-        files = {"files": (uploaded_file.name, uploaded_file, uploaded_file.type)}
-        data = {"text_prompt": text_prompt}
+    # --- Make the API Request ---
+    try:
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
+            full_response = ""
 
-        # --- Make the API Request ---
-        try:
-            with st.spinner("Processing image..."):  # Show spinner while processing
-                response = requests.post(f"{backend_url}/process_image/", files=files, data=data)
-            response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+            # Prepare the request data
+            data = {"text_prompt": user_message.get("text", None)} # Only send text prompt if it exists
+            files = {}
 
-            result = response.json().get("result")
+            if user_message.get("image"):
+              files = {"files": (user_message["image"]["name"], user_message["image"]["content"], user_message["image"]["type"])}
 
-            if result:
-                # --- Display the Result ---
-                st.header("Result")
-                st.markdown(result)
+            # Streaming API Call
+            with requests.post(f"{backend_url}/stream_process_image/", files=files, data=data, stream=True) as response:
+                response.raise_for_status()
+                for chunk in response.iter_content(chunk_size=8192):  # Adjust chunk_size as needed
+                    if chunk:
+                        try:
+                            decoded_chunk = chunk.decode('utf-8')
+                            full_response += decoded_chunk
+                            message_placeholder.markdown(full_response + "▌")  # Display with typing indicator
+                        except UnicodeDecodeError:
+                            # Handle potential decoding errors
+                            print(f"Skipping chunk due to decoding error.")
+                            continue
+                message_placeholder.markdown(full_response)  # Finalize the message
 
-                # --- Download Button (Optional) ---
-                st.download_button(
-                  label="Download Markdown",
-                  data=result,
-                  file_name="output.md",
-                  mime="text/markdown",
-                )
-            else:
-                st.error("No result received from the backend.")
+        st.session_state['chat_history'].append({"role": "assistant", "content": full_response})
 
-        except requests.exceptions.RequestException as e:
-            st.error(f"Error connecting to the backend: {e}")
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error connecting to the backend: {e}")
+        st.session_state['chat_history'].append({"role": "assistant", "content": f"Error: {e}"})
+
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        st.session_state['chat_history'].append({"role": "assistant", "content": f"Error: {e}"})
+
+display_chat_history()
 
 # --- Health Check (Optional) ---
 if st.sidebar.checkbox("Check Backend Health"):
@@ -77,7 +99,6 @@ if st.sidebar.checkbox("Check Backend Health"):
 # --- About Section ---
 st.sidebar.header("About")
 st.sidebar.info(
-    "This application uses a Vision Language Model to process images based on a provided text prompt. "
-    "It communicates with a backend server to perform the VLM processing.\n\n"
-    "Based on docling-project"
+    "This chatbot uses a Vision Language Model to process images and text based on your prompts. "
+    "It communicates with a backend server to perform the VLM processing and streams the response."
 )

@@ -4,6 +4,6 @@ python-multipart
 Pillow
 torch
 docling_core
-transformers
+git+https://github.com/huggingface/transformers
 streamlit 
 requests         
