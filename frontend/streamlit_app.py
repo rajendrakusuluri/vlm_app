@@ -15,7 +15,7 @@ st.markdown("""
 
 # --- Sidebar Configuration ---
 st.sidebar.header("Configuration")
-backend_url = st.sidebar.text_input("Backend URL", "http://localhost:8000")  # Default URL, user can change
+backend_url = st.sidebar.text_input("Backend URL", "http://localhost:8500")  # Default URL, user can change
 # You could potentially add model selection to the sidebar if you wanted to extend the functionality
 
 # --- Chat History ---
